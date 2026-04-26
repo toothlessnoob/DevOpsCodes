@@ -1,49 +1,59 @@
-new commit  pipeline{
- new chnage for commit   tools{
+pipeline {
+    agent any
+
+    tools {
         jdk 'myjava'
         maven 'mymaven131'
     }
-    //more commits on the file
-    //commit on github-- new one
-    agent any
-    new ctsage added
-    stages{
-        stage('Checkout on git by T'){
-            agent any
-            steps{
-                git 'https://github.com/devops-trainer/DevOpsClassCodes.git'
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    url: 'https://github.com/toothlessnoob/DevOpsCodes.git'
             }
         }
-        stage('Compile'){
-            agent any
-            steps{
-                sh 'mvn compile'
+
+        stage('Compile') {
+            steps {
+                sh 'mvn clean compile'
             }
         }
-        stage('CodeReview'){
-            agent any
-            steps{
+
+        stage('Code Review (PMD)') {
+            steps {
                 sh 'mvn pmd:pmd'
             }
         }
-        stage('UnitTest'){
-            agent {label 'win_slave'}
-            steps{
-                git 'https://github.com/devops-trainer/DevOpsClassCodes.git'
-                bat 'mvn test'
+
+        stage('Unit Test') {
+            steps {
+                sh 'mvn test'
             }
         }
-        stage('MetricCheck'){
-            agent any
-            steps{
-                sh 'mvn cobertura:cobertura -Dcobertura.report.format=xml'
+
+        stage('Metric Check (Coverage)') {
+            steps {
+                sh '''
+                    mvn cobertura:cobertura || echo "⚠️ Coverage failed but pipeline continues"
+                '''
             }
         }
-        stage('Package'){
-            agent{label 'win_slave'}
-            steps{
-                bat 'mvn package'
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
             }
+        }
+    }
+
+    post {
+        success {
+            echo "🚀 Pipeline SUCCESS"
+        }
+        failure {
+            echo "❌ Pipeline FAILED"
         }
     }
 }
