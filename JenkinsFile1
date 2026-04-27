@@ -8,7 +8,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout T23456789') {
+        stage('Checkout TOOTH') {
             steps {
                 git branch: 'master',
                     url: 'https://github.com/toothlessnoob/DevOpsCodes.git'
