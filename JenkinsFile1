@@ -8,7 +8,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout T') {
+        stage('Checkout T2') {
             steps {
                 git branch: 'master',
                     url: 'https://github.com/toothlessnoob/DevOpsCodes.git'
